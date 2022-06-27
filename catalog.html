@@ -1,0 +1,49 @@
+<html>
+
+<head>
+  <title>Flower Catalog</title>
+</head>
+
+<body>
+  <h1>Flower Catalog Website</h1>
+  <div class="home-page">
+    <div class="image">
+      <img src="images/freshorigins.jpg" alt="freshorigins" title="freshorigins"
+        width="200">
+    </div>
+    <a href="#first-page"></a>
+    <a href="#second-page"></a>
+    <a href="#guest-book"></a>
+  </div>
+
+  <div class="first-page" id="first-page">
+    <img src="images/pbase-Abeliophyllum.jpg" alt="abeliophyllum"
+      title="abeliophyllum" width="200">
+    <p></p>
+    <input class="download" type="button" value="download">
+  </div>
+
+  <div class="second-page" id="second-page">
+    <img src="images/pbase-agerantum.jpg" alt="agerantum" title="agerantum"
+      width="200">
+    <p></p>
+    <input class="download" type="button" value="download">
+  </div>
+
+  <div class="guest-book" id="guest-book">
+    <form action='/guest-book' method='get'>
+      <div>
+        <label for='name'>Enter name</label>
+        <input type='text' id='name' name='name'>
+      </div>
+      <div>
+        <label for='comment'>Enter comment</label>
+        <input type='text' id='comment' name='comment'>
+      </div>
+      <input type="submit" value="submit">
+    </form>
+  </div>
+
+</body>
+
+</html>

@@ -5,6 +5,7 @@
   * picture of freshorigins
   * flowers links
   * guest book link
+  * Watering jar gif 
 
 ** second page
   * A link of home page + title
