@@ -98,3 +98,21 @@ a:hover {
   flex-flow: column;
   justify-content: space-around;
 }
+
+.comment {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: rgb(6, 6, 86);
+  padding: 5px;
+}
+
+.comment-section {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.last-greet {
+  padding: 10px;
+  color: rgb(35, 106, 238);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
