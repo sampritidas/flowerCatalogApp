@@ -2,9 +2,9 @@
 
 ** Home page 
   * title
-  * flower - freshorigins
-  * its about
-  * download button
+  * picture of freshorigins
+  * flowers links
+  * guest book link
 
 ** second page
   * A link of home page + title
