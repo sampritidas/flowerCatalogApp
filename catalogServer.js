@@ -1,6 +1,5 @@
 const fs = require('fs');
 const { createServer } = require('net');
-const { parseChunk } = require('./parseRequest');
 const { Response } = require('./response');
 
 const extentions = {
@@ -17,13 +16,53 @@ const getContentType = (filename) => {
   return extentions[extention] ? extentions[extention] : 'text/plain';
 };
 
+
 const path = (staticRoot, uri) => {
   return (staticRoot === undefined ? '.' : staticRoot) + uri;
 };
 
-const serveFileContent = ({ uri, protocol }, response, staticRoot) => {
+
+const getNewComment = (queries) => {
+  const date = new Date();
+  const { name, comment } = queries;
+  console.log(date, name, comment);
+  return `${date} : ${name} \n\t\t ${comment}`;
+};
+
+
+const readFile = (filename) => {
+  return fs.readFileSync(filename, 'utf8');
+};
+
+const appendFile = (filename, content) => {
+  fs.appendFileSync(filename, content, 'utf8');
+};
+
+const updateCommentList = (newComment) => {
+  appendFile('comments.txt', newComment);
+  const allComments = readFile('./comments.txt');
+  const guestBookContent = readFile('./guestBook.html')
+  return guestBookContent.replace('_COMMENTS_', allComments);
+};
+
+
+const guestBook = (response, protocol, queries) => {
+  const newComment = getNewComment(queries);
+  const content = updateCommentList(newComment);
+  console.log(content);
+  response.statuscode = 301;
+  response.setHeader('content-type', 'text/html');
+  response.send(protocol, content);
+  return true;
+};
+
+
+const flowerCatalog = ({ uri, protocol }, response, staticRoot) => {
   if (uri === '/') {
     uri = '/index.html';
+  }
+  if (uri.includes('/guest-book')) {
+    return guestBook(response, protocol, queries);
   }
 
   const filename = path(staticRoot, uri);
@@ -45,9 +84,6 @@ const serveFileContent = ({ uri, protocol }, response, staticRoot) => {
   return true;
 };
 
-module.exports = { serveFileContent };
-
-
 const runServer = (PORT, staticRoot, handler) => {
   const server = createServer((socket) => {
     socket.setEncoding('utf8');
@@ -62,9 +98,10 @@ const runServer = (PORT, staticRoot, handler) => {
   server.listen(PORT, () => console.log(`Listening to ${PORT}`));
 };
 
+
 const main = (staticRoot) => {
   const PORT = 44444;
-  runServer(PORT, staticRoot, serveFileContent);
+  runServer(PORT, staticRoot, flowerCatalog);
 };
 
 main(process.argv[2]);

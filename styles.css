@@ -8,6 +8,16 @@
   height: 100%;
 }
 
+.body {
+  padding: 5px;
+  margin: 6px;
+}
+
+.header {
+  display: flex;
+  text-align: center;
+}
+
 .link-holder {
   padding: 10px;
   width: 100%;
@@ -24,6 +34,10 @@
 .second-page {
   height: 40%;
   width: 40%;
+}
+
+.guest-book {
+  padding: 20px;
 }
 
 .image-holder {
