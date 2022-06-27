@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { createServer } = require('net');
+const { guestBook } = require("./guestBookHandler");
 const { parseChunk } = require('./parseRequest');
 const { Response } = require('./response');
 
@@ -22,46 +23,25 @@ const path = (staticRoot, uri) => {
   return (staticRoot === undefined ? '.' : staticRoot) + uri;
 };
 
+const parseUri = (rawUri) => {
+  const queryParams = {};
+  const [uri, params] = rawUri.split('?');
 
-const getNewComment = (queries) => {
-  const date = new Date();
-  const { name, comment } = queries;
-  console.log(date, name, comment);
-  return `${date} : ${name} \n\t\t ${comment}`;
+  if (params) {
+    const queries = params.split('&');
+    queries.forEach((param) => {
+      const [key, value] = param.split('=');
+      queryParams[key] = value;
+    })
+  }
+  return [uri, queryParams];
 };
-
-
-const readFile = (filename) => {
-  return fs.readFileSync(filename, 'utf8');
-};
-
-const appendFile = (filename, content) => {
-  fs.appendFileSync(filename, content, 'utf8');
-};
-
-const updateCommentList = (newComment) => {
-  appendFile('comments.txt', newComment);
-  const allComments = readFile('./comments.txt');
-  const guestBookContent = readFile('./guestBook.html')
-  return guestBookContent.replace('_COMMENTS_', allComments);
-};
-
-
-const guestBook = (response, protocol, queries) => {
-  const newComment = getNewComment(queries);
-  const content = updateCommentList(newComment);
-  console.log(content);
-  response.statuscode = 301;
-  response.setHeader('content-type', 'text/html');
-  response.send(protocol, content);
-  return true;
-};
-
 
 const flowerCatalog = ({ uri, protocol }, response, staticRoot) => {
   if (uri === '/') {
     uri = '/index.html';
   }
+  const [parsedUri, queries] = parseUri(uri);
   if (uri.includes('/guest-book')) {
     return guestBook(response, protocol, queries);
   }
