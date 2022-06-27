@@ -18,6 +18,11 @@
   text-align: center;
 }
 
+.gif {
+  width: 2px;
+  height: 2px;
+}
+
 .link-holder {
   padding: 10px;
   width: 100%;

@@ -1,5 +1,6 @@
 const fs = require('fs');
 const { createServer } = require('net');
+const { parseChunk } = require('./parseRequest');
 const { Response } = require('./response');
 
 const extentions = {
