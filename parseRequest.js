@@ -1,7 +1,17 @@
+const CRLF = '\r\n';
+
+const headerKey = (header, sliceIndex) => {
+  return header.slice(0, sliceIndex).trim();
+};
+
+const headerValue = (header, sliceIndex) => {
+  return header.slice(sliceIndex + 1).trim();
+};
+
 const separateByColon = (header) => {
   const indexOfColon = header.indexOf(':');
-  const key = header.slice(0, indexOfColon).trim();
-  const value = header.slice(indexOfColon + 1).trim();
+  const key = headerKey(header, indexOfColon);
+  const value = headerValue(header, indexOfColon);
   return [key.toLowerCase(), value];
 };
 
@@ -16,16 +26,17 @@ const parseHeader = (header) => {
   return headers;
 };
 
-function parseChunk(chunk) {
-  const request = chunk.split('\r\n');
+const parseRequestLine = (requestLine) => {
+  const [verb, uri, protocol] = requestLine.split(' ');
+  return { verb, uri, protocol: protocol.trim() };
+};
+
+const parseChunk = (chunk) => {
+  const request = chunk.split(CRLF);
   const requestLine = parseRequestLine(request[0]);
   const headers = parseHeader(request.slice(1));
   return [requestLine, headers];
 };
 
-const parseRequestLine = (requestLine) => {
-  const [verb, uri, protocol] = requestLine.split(' ');
-  return { verb, uri, protocol };
-};
 
 module.exports = { parseChunk, parseHeader, parseRequestLine, separateByColon };

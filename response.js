@@ -1,3 +1,5 @@
+const CRLF = '\r\n';
+
 class Response {
   #socket;
   #statuscode;
@@ -26,18 +28,18 @@ class Response {
   }
 
   writeHeaders(protocol) {
-    this.write(`${protocol} ${this.#statuscode}\r\n`);
+    this.write(`${protocol} ${this.#statuscode}${CRLF}`);
 
     const headers = Object.entries(this.#header);
     headers.forEach(([key, value]) => {
-      this.write(`${key}: ${value}\r\n`);
+      this.write(`${key}: ${value}${CRLF}`);
     });
   }
 
   send(protocol, content) {
     this.setHeader('content-length', content.length);
     this.writeHeaders(protocol);
-    this.write('\r\n');
+    this.write(CRLF);
     this.write(content);
     this.end();
   }

@@ -1,0 +1,46 @@
+<html>
+
+<head>
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body class="catalog-holder">
+
+  <h1 class="heading"> <a href="../htmls/catalog.html">
+      << </a>GUEST BOOK</h1>
+
+  <div class="guest-book">
+    <form action='/guest-book' method='get' class="form">
+
+      <h2><strong>Leave a comment</strong></h2>
+
+      <div class="label">
+
+        <div>
+          <label for='name'>Enter name</label>
+          <input type='text' id='name' name='name'>
+        </div>
+
+        <div>
+          <label for='comment'>Enter comment</label>
+          <textarea rows="4" cols="40"
+            name="comment">Enter Comment here...</textarea>
+        </div>
+
+        <div>
+          <input type="submit" value="submit">
+        </div>
+
+      </div>
+
+
+    </form>
+
+    <hr>
+    <h2>Comments</h2>
+    _COMMENTS_
+
+  </div>
+</body>
+
+</html>

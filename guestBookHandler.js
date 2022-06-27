@@ -18,6 +18,7 @@ const appendFile = (filename, content) => {
 const updateCommentList = (newComment) => {
   appendFile('comments.txt', newComment);
   const allComments = readFile('./comments.txt');
+
   const guestBookContent = readFile('./guestBook.html');
   return guestBookContent.replace('_COMMENTS_', allComments);
 };
