@@ -1,8 +1,5 @@
-const { runServer, flowerCatalog } = require('./src/server/catalogServer.js');
+const { server } = require("./src/server/server");
 
-const main = (staticRoot) => {
-  const PORT = 44444;
-  runServer(PORT, staticRoot, flowerCatalog);
-};
+const PORT = 2222;
+server(PORT);
 
-main(process.argv[2]);

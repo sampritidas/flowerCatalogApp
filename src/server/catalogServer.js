@@ -17,4 +17,4 @@ const runServer = (PORT, staticRoot, handler) => {
   server.listen(PORT, () => console.log(`Listening to ${PORT}`));
 };
 
-module.exports = { runServer, flowerCatalog }; 
+module.exports = { runServer }; 

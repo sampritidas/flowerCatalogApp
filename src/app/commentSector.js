@@ -8,40 +8,46 @@ const appendFile = (filename, content) => {
   fs.appendFileSync(filename, content, 'utf8');
 };
 
-const modifyString = (string) => {
-  return string.split('+').join(' ')
-};
-
 const attachTag = (comment) => {
   return `<div class="comment">${comment}</div>`
 };
 
-class CommentSection {
-  #comments;
-  #filename;
-  constructor(filename) {
-    this.#filename = filename;
-    this.#comments = {};
+const date = () => (new Date() + '').slice(0, 15);
+
+const time = () => (new Date() + '').slice(16, 21);
+
+const name = (queries) => queries.get('name');
+
+const comment = (queries) => queries.get('comment');
+
+
+class Guestbook {
+  #appendFile;
+  constructor(appendFile) {
+    this.#appendFile = appendFile;
   }
 
   addComment(queries) {
-    const date = (new Date() + '').slice(0, 15);
-    const time = (new Date() + '').slice(16, 21);
-    const { name, comment } = queries;
-    const modifyComment = modifyString(comment);
-    const modifyName = modifyString(name);
-    const newComment = `${date} [${time}]: <strong>${modifyName}</strong> ---> \n\t\t ${modifyComment}\n`;
-    const commentTag = attachTag(newComment); //should be in getCommets
-    fs.appendFileSync('comments.txt', commentTag, 'utf8');
+    console.log('quesries', queries);
+
+    const newComment =
+      `${date()} [${time()}]:
+       <strong>${name(queries)}</strong> ---> ${comment(queries)}\n`;
+
+    const commentTag = attachTag(newComment);
+
+    appendFile(this.#appendFile, commentTag, 'utf8');
     return true;
   }
 
-  getComments() {
+  getContent() {
     const tagQuote = '<div class="last-greet">_THANKYOU_VISIT_AGAIN_</div>';
-    const guestBookContent = readFile('./htmls/guestBook.html');
-    const allComment = readFile('./comments.txt', 'utf8');
-    return guestBookContent.replace(tagQuote, allComment + tagQuote);
+
+    const templateContent = readFile('./src/app/guestTemplate.html', 'utf8');
+    const allComment = readFile(this.#appendFile, 'utf8');
+    const content = templateContent.replace(tagQuote, allComment + tagQuote);
+    return content;
   }
 }
 
-module.exports = { CommentSection };
+module.exports = { Guestbook };
