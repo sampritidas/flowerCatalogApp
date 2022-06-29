@@ -8,9 +8,9 @@ const getNewComment = (queries) => {
   const date = (new Date() + '').slice(0, 15);
   const time = (new Date() + '').slice(16, 21);
   const { name, comment } = queries;
-
   const modifyComment = modifyString(comment);
   const modifyName = modifyString(name);
+  console.log(date, name, comment);
   return `${date} [${time}]: <strong>${modifyName}</strong> ---> \n\t\t ${modifyComment}\n`;
 };
 

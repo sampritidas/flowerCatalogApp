@@ -1,8 +1,5 @@
 const fs = require('fs');
-const { createServer } = require('net');
-const { guestBook } = require("./guestBookHandler");
-const { parseChunk } = require('./parseRequest');
-const { Response } = require('./response');
+const { guestBook } = require("../app/guestBookHandler");
 
 const extentions = {
   '.html': 'text/html',
@@ -10,7 +7,7 @@ const extentions = {
   '.jpg': 'image/jpeg',
   '.png': 'image/png',
   '.pdf': 'application/pdf'
-}
+};
 
 const getContentType = (filename) => {
   const indexOfExtention = filename.lastIndexOf('.');
@@ -19,7 +16,7 @@ const getContentType = (filename) => {
 };
 
 const path = (staticRoot, uri) => {
-  return (staticRoot === undefined ? '.' : staticRoot) + uri;
+  return (staticRoot === undefined ? './public' : staticRoot) + uri;
 };
 
 const parseUri = (rawUri) => {
@@ -31,13 +28,12 @@ const parseUri = (rawUri) => {
     queries.forEach((param) => {
       const [key, value] = param.split('=');
       queryParams[key] = value;
-    })
+    });
   }
   return [uri, queryParams];
 };
 
-
-const contentCreator = (filename, protocol, response) => {
+const serveFileHandler = (filename, protocol, response) => {
   const contentType = getContentType(filename);
   console.log('type', contentType);
 
@@ -48,16 +44,15 @@ const contentCreator = (filename, protocol, response) => {
   return true;
 };
 
-
 const onNonExistFile = (protocol, response) => {
   response.statuscode = 404;
   response.send(protocol, 'file not found');
   return false;
 };
 
-
 const flowerCatalog = ({ uri, protocol }, response, staticRoot) => {
   let [parsedUri, queries] = parseUri(uri);
+  console.log(parsedUri);
 
   if (parsedUri === '/') {
     parsedUri = '/htmls/catalog.html';
@@ -67,34 +62,12 @@ const flowerCatalog = ({ uri, protocol }, response, staticRoot) => {
   }
 
   const filename = path(staticRoot, parsedUri);
-  console.log('path', filename);
-
-  if (!fs.existsSync(filename)) {
-    return onNonExistFile(protocol, response);
+  console.log(filename);
+  if (fs.existsSync(filename)) {
+    return serveFileHandler(filename, protocol, response);
   }
 
-  return contentCreator(filename, protocol, response);
+  return onNonExistFile(protocol, response);
 };
 
-
-const runServer = (PORT, staticRoot, handler) => {
-  const server = createServer((socket) => {
-    socket.setEncoding('utf8');
-
-    socket.on('data', (chunk) => {
-      const [requestLine] = parseChunk(chunk.toString());
-      const response = new Response(socket);
-      handler(requestLine, response, staticRoot);
-    })
-  });
-
-  server.listen(PORT, () => console.log(`Listening to ${PORT}`));
-};
-
-
-const main = (staticRoot) => {
-  const PORT = 44444;
-  runServer(PORT, staticRoot, flowerCatalog);
-};
-
-main(process.argv[2]);
+module.exports = { flowerCatalog };
