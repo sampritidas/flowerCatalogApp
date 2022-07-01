@@ -1,0 +1,21 @@
+const createNext = handlers => {
+  let index = -1;
+  const callNextHandler = (req, res) => {
+    index++;
+    const currentHandler = handlers[index];
+    console.log(currentHandler);
+    if (currentHandler) {
+      currentHandler(req, res, () => callNextHandler(req, res));
+    }
+  };
+  return callNextHandler;
+};
+
+const handle = (handlers) => {
+  return (req, res) => {
+    const next = createNext(handlers);
+    next(req, res);
+  };
+};
+
+module.exports = { handle };

@@ -1,29 +1,23 @@
-const { Guestbook } = require('../app/commentSector');
+const { Guestbook } = require('./guestbook.js');
 
 const guestBook = (req, res) => {
-  const url = new URL(req.url, `http://${req.headers.host}`);
-
-  if (url.searchParams) {
-    req.guestbook.addComment(url.searchParams);
-  }
-
   const content = req.guestbook.getContent();
   res.statuscode = 301;
   res.setHeader('content-type', 'text/html');
   res.end(content);
-  return true;
 };
 
-const guestBookHandler = (req, res) => {
+const guestBookHandler = (req, res, next) => {
   if (req.url.includes('guestbook')) {
-    console.log('im in');
-    const commentFile = './src/app/comments.txt'
+    console.log('Inside Guestbook');
+
+    const commentFile = './src/app/comments.json'
     const guestbook = new Guestbook(commentFile);
 
     req.guestbook = guestbook;
     return guestBook(req, res);
   }
-  return false;
+  next();
 };
 
 module.exports = { guestBookHandler };

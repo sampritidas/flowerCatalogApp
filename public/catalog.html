@@ -6,6 +6,15 @@
 
   <link rel="icon" type="image/x-icon"
     href="./images/animated-flower-image-0021.gif">
+  <script>
+    const vanishJar = () => {
+      const jar = document.getElementById('gif');
+      jar.style.display = 'none';
+      setTimeout(() => {
+        jar.style.display = 'block';
+      }, 2000);
+    }
+  </script>
 </head>
 
 <body class="catalog-holder">
@@ -23,13 +32,12 @@
       <a href="/secondpage.html"> &gt Agerantum</a>
       <a href="/guestbook.html"> &gt Guest Book</a>
 
-      <div class="gif">
+      <div class="gif" id="gif">
         <img src="../images/animated-flower-image-0021.gif" alt="watering-jar"
-          title="watering-jar">
+          title="watering-jar" onclick="vanishJar()">
       </div>
-
     </div>
-
+  </div>
   </div>
 
 </body>

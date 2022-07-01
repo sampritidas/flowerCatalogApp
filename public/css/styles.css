@@ -116,3 +116,12 @@ a:hover {
   color: rgb(35, 106, 238);
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
+
+.table-content {
+  background-color: rgb(235, 246, 246);
+}
+
+td {
+  background-color: rgb(224, 224, 242);
+  padding: 8px;
+}

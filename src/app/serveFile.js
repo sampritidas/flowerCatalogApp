@@ -16,14 +16,14 @@ const getContentType = (filename) => {
   return extentions[extention] ? extentions[extention] : 'text/plain';
 };
 
-const serveFileHandler = (req, response) => {
+const serveFileHandler = (req, response, next) => {
   let filepath = './public' + req.url;
 
-  if (filepath === './public/') {
+  if (req.url === '/') {
     filepath = filepath + 'catalog.html';
   }
   if (!fs.existsSync(filepath)) {
-    return false;
+    next();
   }
 
   console.log(filepath);
@@ -32,22 +32,6 @@ const serveFileHandler = (req, response) => {
 
   response.setHeader('content-type', contentType);
   response.end(content);
-  return true;
 };
 
-const setErrorOnNonExistFile = (req, response) => {
-  response.statusCode = 404;
-  response.setHeader('content-type', 'text/plain');
-  response.end('FILE NOT FOUND');
-};
-
-const onFileNotFound = (req, res) => {
-  const filepath = './public' + req.url;
-  if (!fs.existsSync(filepath)) {
-    setErrorOnNonExistFile(req, res);
-    return true;
-  }
-  return false;
-};
-
-module.exports = { serveFileHandler, onFileNotFound };
+module.exports = { serveFileHandler };

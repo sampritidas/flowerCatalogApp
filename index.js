@@ -1,17 +1,16 @@
+const { server } = require("./src/server/server.js");
 const { guestBookHandler } = require("./src/app/guestBookHandler");
-const { server } = require("./src/server/server");
-const { serveFileHandler, onFileNotFound } = require("./src/app/catalogHandler");
+const { serveFileHandler } = require("./src/app/serveFile.js");
+const { onFileNotFound } = require("./src/app/onFileNotFound.js");
+const { handle } = require("./src/server/handlers.js");
+const { addCommentHandler } = require("./src/app/addComment.js");
 
-const handlers = [guestBookHandler, serveFileHandler, onFileNotFound];
-
-const handle = (handlers) => (request, response) => {
-  for (const handler of handlers) {
-    if (handler(request, response)) {
-      return true;
-    }
-  }
-  return false;
-};
+const handlers = [
+  addCommentHandler,
+  guestBookHandler,
+  serveFileHandler,
+  onFileNotFound
+];
 
 const PORT = 5555;
 server(PORT, handle(handlers));
