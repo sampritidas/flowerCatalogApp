@@ -10,7 +10,6 @@ const extentions = {
 };
 
 const getContentType = (filename) => {
-  console.log(filename);
   const indexOfExtention = filename.lastIndexOf('.');
   const extention = filename.slice(indexOfExtention);
   return extentions[extention] ? extentions[extention] : 'text/plain';
@@ -26,7 +25,6 @@ const serveFileHandler = (req, response, next) => {
     next();
   }
 
-  console.log(filepath);
   const contentType = getContentType(filepath);
   const content = fs.readFileSync(filepath);
 
