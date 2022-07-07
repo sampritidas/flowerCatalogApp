@@ -9,7 +9,6 @@ const guestBook = (req, res) => {
 
 const guestBookHandler = (req, res, next) => {
   if (req.url.includes('guestbook')) {
-    console.log('Inside Guestbook');
 
     const commentFile = './src/app/comments.json'
     const guestbook = new Guestbook(commentFile);
