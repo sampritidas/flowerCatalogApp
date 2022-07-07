@@ -30,20 +30,15 @@ const bodyParser = (req, res, next) => {
   });
 };
 
-const cookieParser = cookieString => {
-  const cookies = {};
-  if (!cookieString) {
-    return cookies;
+const cookieParser = (req, res, next) => {
+  const cookie = {};
+  if (req.headers.cookie) {
+    req.headers.cookie.split(';').forEach(cookie => {
+      const [name, value] = cookie.split('=');
+      cookie[name] = value;
+    })
   }
-  cookieString.split(';').forEach(cookie => {
-    const [name, value] = cookie.split('=');
-    cookies[name.trim()] = value.trim();
-  })
-  return cookies;
-};
-
-const injectCookie = (req, res, next) => {
-  req.cookie = cookieParser(req.headers.cookie);
+  req.cookie = cookie;
   next();
 };
 
@@ -63,7 +58,7 @@ const redirectToHomePage = (res, location) => {
 
 const signInHandler = (users, sessions) => {
   return (req, res, next) => {
-    const sessionId = req.headers.cookie?.split('=')[1];
+    const sessionId = req.cookie.id;
 
     if (req.url !== '/login') {
       next();
@@ -74,24 +69,22 @@ const signInHandler = (users, sessions) => {
       return redirectToHomePage(res, '/');
     }
 
-    if (req.url === '/login' && req.method === 'GET') {
+    if (req.method === 'GET') {
       res.end(logInPage);
       return;
     }
 
-    if (req.url === '/login' && req.method === 'POST') {
-      const username = req.bodyParam.get('username');
-      const session = createSession(username);
+    const username = req.bodyParam.get('username');
+    const session = createSession(username);
 
-      if (!users[username]) {
-        return redirectToHomePage(res, '/signup');
-      }
-
-      sessions[session.id] = session;
-      res.setHeader('set-cookie', `id=${session.id}`);
-      return redirectToHomePage(res, '/');
+    if (!users[username]) {
+      return redirectToHomePage(res, '/signup');
     }
+
+    sessions[session.id] = session;
+    res.setHeader('set-cookie', `id=${session.id}`);
+    return redirectToHomePage(res, '/');
   };
 };
 
-module.exports = { injectCookie, injectSession, bodyParser, signInHandler };
+module.exports = { injectSession, signInHandler, bodyParser, cookieParser };
