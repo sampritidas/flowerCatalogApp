@@ -16,10 +16,6 @@ const date = () => (new Date() + '').slice(0, 15);
 
 const time = () => (new Date() + '').slice(16, 21);
 
-const name = (queries) => queries.get('name');
-
-const comment = (queries) => queries.get('comment');
-
 const formatComment = (comments) => {
   const allComments = comments.map(({ date, time, name, comment }) => {
     const tdata = `${td(date)}${td(time)}${td(name)}${td(comment)}`;
@@ -37,28 +33,43 @@ const modifyComment = (name, comment) => {
 };
 
 class Guestbook {
-  #appendFile;
-  constructor(appendFile) {
-    this.#appendFile = appendFile;
+  #writeFile;
+  #template;
+  #comments;
+  constructor(writeFile, template) {
+    this.#writeFile = writeFile;
+    this.#template = template;
+    this.#comments;
   }
 
   addComment(name, comment) {
     const newComment = modifyComment(name, comment);
-    const comments = JSON.parse(readFile(this.#appendFile, 'utf8'));
+    const comments = this.#comments;
+
     comments.push(newComment);
 
-    writeFile(this.#appendFile, JSON.stringify(comments), 'utf8');
-    return true;
+    writeFile(this.#writeFile, JSON.stringify(comments), 'utf8');
+    return comments;
   }
 
   getContent() {
     const placeHolder = '__TABLE_CONTENT__';
+    const templateContent = readFile(this.#template);
+    const allComments = this.#comments;
 
-    const templateContent = readFile('./src/app/guestTemplate.html', 'utf8');
-    const allComment = JSON.parse(readFile(this.#appendFile, 'utf8'));
-    const formattedComment = formatComment(allComment);
+    const formattedComment = formatComment(allComments);
     const content = templateContent.replace(placeHolder, formattedComment);
     return content;
+  }
+
+  initialize() {
+    const allComments = JSON.parse(readFile(this.#writeFile));
+    this.#comments = allComments;
+    return;
+  }
+
+  getComments() {
+    return this.#comments;
   }
 }
 

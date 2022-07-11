@@ -1,17 +1,13 @@
 const { Guestbook } = require("./guestbook");
 
-const redirect = (path, req, res) => {
-  res.statusCode = 302;
-  res.setHeader('Location', path);
-  res.end();
-};
-
 const addComment = (req, res) => {
   const name = req.bodyParam.get('name');
   const comment = req.bodyParam.get('comment');
+
+  req.guestbook.initialize();
   req.guestbook.addComment(name, comment);
+
   res.end();
-  // redirect('/guestbook', req, res);
   return;
 };
 

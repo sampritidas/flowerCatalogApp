@@ -1,10 +1,13 @@
 const { Guestbook } = require('./guestbook.js');
 
 const guestBook = (req, res) => {
+  req.guestbook.initialize();
+
   const content = req.guestbook.getContent();
   res.statuscode = 301;
   res.setHeader('content-type', 'text/html');
   res.end(content);
+  return;
 };
 
 const redirect = (path, req, res) => {
@@ -13,19 +16,25 @@ const redirect = (path, req, res) => {
   res.end();
 };
 
-const guestBookHandler = users => (req, res, next) => {
+const guestBookHandler = (users, commentFile, template) => (req, res, next) => {
+  const guestbook = new Guestbook(commentFile, template);
+  guestbook.initialize();
+  comments = guestbook.getComments();
+  req.comments = comments;
+  console.log('comments inside guestbook', comments);
+  console.log('req', req.comments);
+
   if (req.url.includes('guestbook')) {
     if (!req.sessions[req.cookie.id]) {
       redirect('/login', req, res);
       return;
     }
-    const commentFile = './src/app/comments.json'
-    const guestbook = new Guestbook(commentFile);
 
     req.guestbook = guestbook;
     return guestBook(req, res);
   }
   next();
+  return;
 };
 
 module.exports = { guestBookHandler };

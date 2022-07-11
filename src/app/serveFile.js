@@ -7,6 +7,7 @@ const extentions = {
   '.png': 'image/png',
   '.pdf': 'application/pdf',
   '.gif': 'imaghes/gif',
+  '.json': 'application/json'
 };
 
 const getContentType = (filename) => {
@@ -23,6 +24,7 @@ const serveFileHandler = (req, response, next) => {
   }
   if (!fs.existsSync(filepath)) {
     next();
+    return;
   }
 
   const contentType = getContentType(filepath);
