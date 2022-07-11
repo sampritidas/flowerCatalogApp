@@ -28,12 +28,11 @@ const formatComment = (comments) => {
   return allComments.join('\n');
 };
 
-const modifyComment = (queries) => {
+const modifyComment = (name, comment) => {
   return {
     date: date(),
     time: time(),
-    name: name(queries),
-    comment: comment(queries)
+    name, comment,
   }
 };
 
@@ -43,8 +42,8 @@ class Guestbook {
     this.#appendFile = appendFile;
   }
 
-  addComment(queries) {
-    const newComment = modifyComment(queries);
+  addComment(name, comment) {
+    const newComment = modifyComment(name, comment);
     const comments = JSON.parse(readFile(this.#appendFile, 'utf8'));
     comments.push(newComment);
 

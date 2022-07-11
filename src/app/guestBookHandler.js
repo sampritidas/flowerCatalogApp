@@ -7,9 +7,18 @@ const guestBook = (req, res) => {
   res.end(content);
 };
 
-const guestBookHandler = (req, res, next) => {
-  if (req.url.includes('guestbook')) {
+const redirect = (path, req, res) => {
+  res.statusCode = 302;
+  res.setHeader('Location', path);
+  res.end();
+};
 
+const guestBookHandler = users => (req, res, next) => {
+  if (req.url.includes('guestbook')) {
+    if (!req.sessions[req.cookie.id]) {
+      redirect('/login', req, res);
+      return;
+    }
     const commentFile = './src/app/comments.json'
     const guestbook = new Guestbook(commentFile);
 

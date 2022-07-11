@@ -26,7 +26,7 @@ const handlers = [
   signInHandler(users, sessions),
   signOutHandler(sessions),
   addCommentHandler,
-  guestBookHandler,
+  guestBookHandler(users),
   serveFileHandler,
   onFileNotFound
 ];

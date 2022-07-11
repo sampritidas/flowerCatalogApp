@@ -33,8 +33,8 @@ const bodyParser = (req, res, next) => {
 const cookieParser = (req, res, next) => {
   const cookie = {};
   if (req.headers.cookie) {
-    req.headers.cookie.split(';').forEach(cookie => {
-      const [name, value] = cookie.split('=');
+    req.headers.cookie.split(';').forEach(element => {
+      const [name, value] = element.split('=');
       cookie[name] = value;
     })
   }
@@ -66,7 +66,7 @@ const signInHandler = (users, sessions) => {
     }
 
     if (req.sessions[sessionId]) {
-      return redirectToHomePage(res, '/');
+      return redirectToHomePage(res, '/guestbook');
     }
 
     if (req.method === 'GET') {
@@ -83,7 +83,7 @@ const signInHandler = (users, sessions) => {
 
     sessions[session.id] = session;
     res.setHeader('set-cookie', `id=${session.id}`);
-    return redirectToHomePage(res, '/');
+    return redirectToHomePage(res, '/guestbook');
   };
 };
 

@@ -18,11 +18,15 @@ const getUserDetails = (username) => {
 };
 
 const signUpHandler = (users) => (req, res, next) => {
-  if (req.url === '/signup' && req.method === 'GET') {
+  if (req.url !== '/signup') {
+    next();
+    return;
+  }
+  if (req.method === 'GET') {
     res.end(signUpPage);
     return;
   }
-  if (req.url === '/signup' && req.method === 'POST') {
+  if (req.method === 'POST') {
     const newUser = getUserDetails(req.bodyParam.get('username'));
     users[newUser.username] = newUser;
     res.statusCode = 302;
@@ -30,8 +34,6 @@ const signUpHandler = (users) => (req, res, next) => {
     res.end();
     return;
   }
-  next();
-
 };
 
 module.exports = { signUpHandler };
