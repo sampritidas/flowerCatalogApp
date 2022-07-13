@@ -1,5 +1,64 @@
 {
   "devDependencies": {
     "supertest": "^6.2.4"
-  }
+  },
+  "name": "flowercatalogapp",
+  "description": "** Home page    * title   * picture of freshorigins   * flowers links   * guest book link   * Watering jar gif",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "asap": "^2.0.6",
+    "combined-stream": "^1.0.8",
+    "asynckit": "^0.4.0",
+    "call-bind": "^1.0.2",
+    "cookiejar": "^2.1.3",
+    "debug": "^4.3.4",
+    "delayed-stream": "^1.0.0",
+    "dezalgo": "^1.0.3",
+    "fast-safe-stringify": "^2.1.1",
+    "form-data": "^4.0.0",
+    "formidable": "^2.0.1",
+    "function-bind": "^1.1.1",
+    "get-intrinsic": "^1.1.2",
+    "has": "^1.0.3",
+    "lru-cache": "^6.0.0",
+    "mime": "^2.6.0",
+    "has-symbols": "^1.0.3",
+    "methods": "^1.1.2",
+    "mime-db": "^1.52.0",
+    "component-emitter": "^1.3.0",
+    "once": "^1.4.0",
+    "mime-types": "^2.1.35",
+    "object-inspect": "^1.12.2",
+    "ms": "^2.1.2",
+    "hexoid": "^1.0.0",
+    "qs": "^6.11.0",
+    "side-channel": "^1.0.4",
+    "safe-buffer": "^5.2.1",
+    "superagent": "^8.0.0",
+    "semver": "^7.3.7",
+    "inherits": "^2.0.4",
+    "wrappy": "^1.0.2",
+    "readable-stream": "^3.6.0",
+    "yallist": "^4.0.0",
+    "string_decoder": "^1.3.0",
+    "util-deprecate": "^1.0.2"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sampritidas/flowerCatalogApp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sampritidas/flowerCatalogApp/issues"
+  },
+  "homepage": "https://github.com/sampritidas/flowerCatalogApp#readme"
 }

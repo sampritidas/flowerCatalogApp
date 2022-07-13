@@ -12,7 +12,6 @@ const createNext = handlers => {
 
 const handle = (handlers) => {
   return (req, res) => {
-    console.log(req.headers);
     const next = createNext(handlers);
     next(req, res);
   };
