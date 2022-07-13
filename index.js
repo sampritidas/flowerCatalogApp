@@ -1,14 +1,15 @@
 const lib = require("./src/app/logInHandler.js");
 const { server } = require("./src/server/server.js");
 const { handle } = require("./src/server/handlers.js");
-const { signOutHandler } = require("./src/app/logOutHandler");
+const { logOutHandler } = require("./src/app/logOutHandler");
 const { serveFileHandler } = require("./src/app/serveFile.js");
 const { signUpHandler } = require("./src/app/signUpHandler.js");
-const { addCommentHandler } = require("./src/app/addComment.js");
+const { apiHandler } = require("./src/catalogApi/apiHandler.js");
 const { onFileNotFound } = require("./src/app/onFileNotFound.js");
 const { guestBookHandler } = require("./src/app/guestBookHandler");
-const { apiHandler } = require("./src/catalogApi/apiHandler.js");
-const { bodyParser, injectSession, signInHandler, cookieParser } = lib;
+const { bodyParser, cookieParser } = require("./src/app/parser.js");
+const { addCommentHandler } = require("./src/app/addCommentHandler.js");
+const { injectSession, logInHandler } = lib;
 
 
 const logRequest = (req, res, next) => {
@@ -16,7 +17,7 @@ const logRequest = (req, res, next) => {
   next();
 };
 
-const commentFile = './src/app/comments.json';
+const commentFile = './public/comments.json';
 const guestTemplate = './src/app/guestTemplate.html';
 const users = {};
 const sessions = {};
@@ -27,9 +28,9 @@ const handlers = [
   cookieParser,
   injectSession(sessions),
   signUpHandler(users),
-  signInHandler(users, sessions),
-  signOutHandler(sessions),
-  addCommentHandler,
+  logInHandler(users, sessions),
+  logOutHandler(sessions),
+  addCommentHandler(commentFile),
   guestBookHandler(users, commentFile, guestTemplate),
   serveFileHandler,
   apiHandler,

@@ -3,7 +3,7 @@ const deleteSession = (req, sessions) => {
   delete sessions[cookieId];
 };
 
-const signOutHandler = (sessions) => {
+const logOutHandler = (sessions) => {
   return (req, res, next) => {
     if (req.url === '/logout' && req.method === 'GET') {
       deleteSession(req, sessions);
@@ -18,4 +18,4 @@ const signOutHandler = (sessions) => {
   }
 };
 
-module.exports = { signOutHandler };
+module.exports = { logOutHandler };

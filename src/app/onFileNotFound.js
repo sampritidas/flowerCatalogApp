@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 const setErrorOnNonExistFile = (req, response) => {
   response.statusCode = 404;
   response.setHeader('content-type', 'text/plain');

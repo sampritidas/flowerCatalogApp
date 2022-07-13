@@ -21,8 +21,6 @@ const guestBookHandler = (users, commentFile, template) => (req, res, next) => {
   guestbook.initialize();
   comments = guestbook.getComments();
   req.comments = comments;
-  console.log('comments inside guestbook', comments);
-  console.log('req', req.comments);
 
   if (req.url.includes('guestbook')) {
     if (!req.sessions[req.cookie.id]) {

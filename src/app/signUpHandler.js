@@ -31,7 +31,7 @@ const signUpHandler = (users) => (req, res, next) => {
     users[newUser.username] = newUser;
     res.statusCode = 302;
     res.setHeader('Location', '/login');
-    res.end();
+    res.end('post happened');
     return;
   }
 };
