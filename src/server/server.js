@@ -1,8 +1,8 @@
 const http = require('http');
 
-const server = (PORT, handler) => {
+const server = (PORT, mainHandler) => {
   const httpServer = http.createServer((req, res) => {
-    handler(req, res);
+    mainHandler(req, res);
   })
 
   httpServer.listen(PORT, () =>

@@ -1,4 +1,6 @@
 const request = require('supertest');
+const assert = require('assert');
+const fs = require('fs');
 
 const lib = require("../src/app/logInHandler.js");
 const { bodyParser, cookieParser } = require('../src/app/parser.js');
@@ -14,7 +16,7 @@ const { injectSession, logInHandler } = lib;
 
 const users = {};
 const sessions = {};
-const commentFile = './public/comments.json';
+const commentFile = './public/testComments.json';
 const guestTemplate = './src/app/guestTemplate.html';
 
 const handlers = [
@@ -25,7 +27,7 @@ const handlers = [
   logInHandler(users, sessions),
   logOutHandler(sessions),
   addCommentHandler(commentFile),
-  // guestBookHandler(users, commentFile, guestTemplate),
+  guestBookHandler(users, commentFile, guestTemplate),
   serveFileHandler,
   apiHandler,
   // onFileNotFound
@@ -48,7 +50,11 @@ describe('signUpHandler', () => {
 
       .expect('location', '/login')
       .expect(/post/)
-      .expect(302, done)
+      .expect(302)
+      .end(function (err, res) {
+        if (err) return done(err);
+        return done();
+      });
   })
 });
 
@@ -85,6 +91,61 @@ describe('logOutHandler', () => {
   });
 });
 
+describe('addCommentHandler', () => {
+  beforeEach(() => {
+    fs.writeFileSync(commentFile, '[]');
+  });
+
+  it('should add comments with name in testComments.json on POST /addcomment', (done) => {
+    request(handle(handlers))
+      .post('/addcomment')
+      .send('name=john&comment=nice')
+      .set('Accept', 'application/json')
+
+      .expect('content-length', '0')
+      .expect(200)
+      .end(function (err, res) {
+
+        // const actual = fs.readFileSync(commentFile, 'utf-8');
+        // const exp = `[{'comment': 'nice','date': 'Wed Jul 13 2022','name': 'john','time': '10:57'}]'`;
+        // assert.deepStrictEqual(JSON.parse(actual), exp);
+
+        if (err) return done(err);
+        return done();
+      });
+  });
+});
+
+describe('guestBookHandler', () => {
+  it('should redirect to login page in GET /guestbook if cookie not set', (done) => {
+    request(handle(handlers))
+      .get('/guestbook')
+
+      .expect('location', '/login')
+      .expect(302)
+      .end(function (err, res) {
+        if (err) return done(err);
+        return done();
+      });
+  });
+
+  it('should redirect to login page in GET /guestbook if cookie not set', (done) => {
+    request(handle(handlers))
+    // .get('/login')
+    // .send('name=john')
+    // .get('/guestbook')
+    // .set('cookie', 'id=5')
+
+    // .expect('location', '/loginnn')
+    // .expect(302)
+    // .end(function (err, res) {
+    //   console.log(res);
+    //   if (err) return done(err);
+    //   return done();
+    // });
+  });
+});
+
 describe('serveFileHandler', () => {
   it('should set content-type as "text/html" if filePath contains ".html"', (done) => {
     request(handle(handlers))
@@ -100,3 +161,18 @@ describe('serveFileHandler', () => {
       });
   });
 });
+
+// describe('apiHandler', () => {
+//   it('should give all comments from json on GET /api/comments', (done) => {
+//     request(handle(handlers))
+//       .get('/api/comments')
+
+      // .expect('content-type', /json/)
+      // .expect(/name/)
+  //     .expect(200)
+  //     .end(function (err, res) {
+  //       if (err) return done(err);
+  //       return done();
+  //     });
+  // });
+// });

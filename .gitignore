@@ -1,1 +1,3 @@
-public/comments.json
+data/comments.json
+data/testComments.json
+test/testApp.js

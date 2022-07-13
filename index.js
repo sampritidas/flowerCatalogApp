@@ -12,30 +12,36 @@ const { addCommentHandler } = require("./src/app/addCommentHandler.js");
 const { injectSession, logInHandler } = lib;
 
 
-const logRequest = (req, res, next) => {
-  console.log(new Date(), req.method, req.url);
+const logRequest = logger => (req, res, next) => {
+  logger(new Date(), req.method, req.url);
   next();
 };
 
-const commentFile = './public/comments.json';
-const guestTemplate = './src/app/guestTemplate.html';
-const users = {};
-const sessions = {};
+const config = {
+  'commentFile': './data/comments.json',
+  'guestTemplate': './src/app/guestTemplate.html',
+  'users': {},
+  'logger': console.log,
+}
 
-const handlers = [
-  logRequest,
-  bodyParser,
-  cookieParser,
-  injectSession(sessions),
-  signUpHandler(users),
-  logInHandler(users, sessions),
-  logOutHandler(sessions),
-  addCommentHandler(commentFile),
-  guestBookHandler(users, commentFile, guestTemplate),
-  serveFileHandler,
-  apiHandler,
-  onFileNotFound
-];
+const app = ({ commentFile, guestTemplate, users, logger }, sessions) => {
+  const handlers = [
+    logRequest(logger),
+    bodyParser,
+    cookieParser,
+    injectSession(sessions),
+    signUpHandler(users),
+    logInHandler(users, sessions),
+    logOutHandler(sessions),
+    addCommentHandler(commentFile),
+    guestBookHandler(users, commentFile, guestTemplate),
+    serveFileHandler,
+    apiHandler,
+    onFileNotFound
+  ];
+  const mainHandler = handle(handlers);
+  return (req, res) => mainHandler(req, res);
+}
 
 const PORT = 5555;
-server(PORT, handle(handlers));
+server(PORT, app(config, sessions = {}));
