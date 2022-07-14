@@ -32,7 +32,6 @@ describe('POST /signup', () => {
       .set('Accept', 'application/json')
 
       .expect('location', '/signUpSuccessMsg.html')
-      // .expect(/post/)
       .expect(302)
       .end(function (err, res) {
         if (err) return done(err);
