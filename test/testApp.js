@@ -7,15 +7,16 @@ const ReturnTrue = (ele) => {
 }
 
 const testConfig = {
-  'commentFile': './data/comments.json',
+  'commentFile': './data/testComments.json',
   'guestTemplate': './src/app/guestTemplate.html',
-  'users': {},
   'logger': ReturnTrue,
 }
 
+const myApp = app(testConfig, {}, {});
+
 describe('GET /signup', () => {
   it('should give signup page on GET /signup', (done) => {
-    request(app(testConfig, {}))
+    request(myApp)
       .get('/signup')
 
       .expect(/html/)
@@ -25,7 +26,7 @@ describe('GET /signup', () => {
 
 describe('POST /signup', () => {
   it('should give statusCode 302 on POST /signup', (done) => {
-    request(app(testConfig, {}))
+    request(myApp)
       .post('/signup')
       .send('username=john')
       .set('Accept', 'application/json')
@@ -42,7 +43,7 @@ describe('POST /signup', () => {
 
 describe('GET /login', () => {
   it('should give logInPage on GET /login', (done) => {
-    request(app(testConfig, {}))
+    request(myApp)
       .get('/login')
 
       .expect(/html/)
@@ -52,7 +53,7 @@ describe('GET /login', () => {
 
 describe('POST /login', () => {
   it('should set cookie on POST /login', (done) => {
-    request(app(testConfig, {}))
+    request(myApp)
       .post('/login')
       .send('username=john')
       .set('Accept', 'application/json')
@@ -65,7 +66,7 @@ describe('POST /login', () => {
 
 describe('GET /logout', () => {
   it('should set cookie id 0, cookie max-age 0 and redirect to the login page', (done) => {
-    request(app(testConfig, {}))
+    request(myApp)
       .get('/logout')
 
       .expect('set-cookie', /id=0/)
@@ -74,9 +75,87 @@ describe('GET /logout', () => {
   });
 });
 
+describe('POST /addcomment', () => {
+  beforeEach(() => {
+    fs.writeFileSync(testConfig.commentFile, '[]');
+  });
+
+  it('should add comments with name in testComments.json on POST /addcomment', (done) => {
+    request(myApp)
+      .post('/addcomment')
+      .send('name=john&comment=nice')
+
+      .expect('content-length', '0')
+      .expect(200)
+      .end(function (err, res) {
+        if (err) return done(err);
+        return done();
+      });
+  });
+});
+
+describe('guestBookHandler', () => {
+  it('should redirect to login page in GET /guestbook if cookie not set', (done) => {
+    request(myApp)
+      .get('/guestbook')
+
+      .expect('location', '/login')
+      .expect(302)
+      .end(function (err, res) {
+        if (err) return done(err);
+        return done();
+      });
+  });
+});
+
+describe('guestBookHandler', () => {
+  it('should redirect to login page in GET /guestbook if cookie set', (done) => {
+    const sessions = {
+      '1234': {
+        'id': '1234',
+        'username': 'Sampriti',
+        'date': 'Wed Jul 14 2022'
+      }
+    }
+
+    const users = {
+      'sampriti': { 'username': 'Sampriti' }
+    };
+
+    const myApp = app(testConfig, users, sessions)
+    request(myApp)
+      .post('/guestbook')
+      .set('cookie', 'id=1234')
+      .send('username=Sampriti')
+
+      .expect(200)
+      .expect(/html/)
+      .end(function (err, res) {
+        if (err) return done(err);
+        return done();
+      });
+  });
+});
+
+// it('should redirect to login page in GET /guestbook if cookie not set', (done) => {
+//   request(handle(handlers))
+// .get('/login')
+// .send('name=john')
+// .get('/guestbook')
+// .set('cookie', 'id=5')
+
+// .expect('location', '/loginnn')
+// .expect(302)
+// .end(function (err, res) {
+//   if (err) return done(err);
+//   return done();
+// });
+//   });
+// });
+
 describe('serveFileHandler', () => {
   it('should set content-type as "text/html" if filePath contains ".html"', (done) => {
-    request(app(testConfig, {}))
+    request(myApp)
       .get('/')
 
       .expect('content-length', '1070')
@@ -92,7 +171,7 @@ describe('serveFileHandler', () => {
 
 describe('GET /api/comments', () => {
   it('should give all comments from json on GET /api/comments', (done) => {
-    request(app(testConfig, {}))
+    request(myApp)
       .get('/api/comments')
 
       .expect('content-length', '74')
@@ -107,7 +186,7 @@ describe('GET /api/comments', () => {
 
 describe('GET /api/search', () => {
   it('should give specific comments from json on GET /api/search', (done) => {
-    request(app(testConfig, {}))
+    request(myApp)
       .get('/api/search?name=john')
 
       .expect('content-length', '74')

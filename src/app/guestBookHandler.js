@@ -4,7 +4,7 @@ const guestBook = (req, res) => {
   req.guestbook.initialize();
 
   const content = req.guestbook.getContent();
-  res.statuscode = 301;
+  res.statuscode = 200;
   res.setHeader('content-type', 'text/html');
   res.end(content);
   return;

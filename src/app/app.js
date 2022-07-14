@@ -11,7 +11,7 @@ const { apiHandler } = require("../catalogApi/apiHandler.js");
 const { addCommentHandler } = require("./addCommentHandler.js");
 const { injectSession, logInHandler } = lib;
 
-const app = ({ commentFile, guestTemplate, users, logger }, sessions) => {
+const app = ({ commentFile, guestTemplate, logger }, users, sessions) => {
   const handlers = [
     logRequest(logger),
     bodyParser,
