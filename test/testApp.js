@@ -31,8 +31,8 @@ describe('POST /signup', () => {
       .send('username=john')
       .set('Accept', 'application/json')
 
-      .expect('location', '/login')
-      .expect(/post/)
+      .expect('location', '/signUpSuccessMsg.html')
+      // .expect(/post/)
       .expect(302)
       .end(function (err, res) {
         if (err) return done(err);
@@ -94,7 +94,7 @@ describe('POST /addcomment', () => {
   });
 });
 
-describe('guestBookHandler', () => {
+describe('GET /guestbook', () => {
   it('should redirect to login page in GET /guestbook if cookie not set', (done) => {
     request(myApp)
       .get('/guestbook')
@@ -108,7 +108,7 @@ describe('guestBookHandler', () => {
   });
 });
 
-describe('guestBookHandler', () => {
+describe('POST /guestbook', () => {
   it('should redirect to login page in GET /guestbook if cookie set', (done) => {
     const sessions = {
       '1234': {
@@ -136,22 +136,6 @@ describe('guestBookHandler', () => {
       });
   });
 });
-
-// it('should redirect to login page in GET /guestbook if cookie not set', (done) => {
-//   request(handle(handlers))
-// .get('/login')
-// .send('name=john')
-// .get('/guestbook')
-// .set('cookie', 'id=5')
-
-// .expect('location', '/loginnn')
-// .expect(302)
-// .end(function (err, res) {
-//   if (err) return done(err);
-//   return done();
-// });
-//   });
-// });
 
 describe('serveFileHandler', () => {
   it('should set content-type as "text/html" if filePath contains ".html"', (done) => {

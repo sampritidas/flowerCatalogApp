@@ -1,0 +1,25 @@
+<html>
+
+<head>
+  <title>SUCCESS SIGNUP</title>
+  <script>
+    const goToLogin = () => {
+      window.location = '/login';
+    };
+
+    const main = () => {
+      const buttonElement = document.getElementById('submit-button')
+      buttonElement.addEventListener('click', goToLogin);
+    };
+
+    window.onload = main;
+  </script>
+</head>
+
+<body>
+  <p>Registered successfully in <strong>FLOWER CATALOG</strong></p>
+  <p>Click to go Login page</p>
+  <button type="button" id="submit-button">LOGIN</button>
+</body>
+
+</html>
