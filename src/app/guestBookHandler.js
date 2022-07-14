@@ -24,7 +24,7 @@ const guestBookHandler = (users, commentFile, template) => (req, res, next) => {
 
   if (req.url.includes('guestbook')) {
     if (!req.sessions[req.cookie.id]) {
-      redirect('/login', req, res);
+      redirect('/signup', req, res);
       return;
     }
 
