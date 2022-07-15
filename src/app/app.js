@@ -4,7 +4,7 @@ const { Guestbook } = require('./guestbook.js');
 const lib = require("./logInHandler.js");
 const { logRequest } = require('./logRequest.js');
 const { logOutHandler } = require("./logOutHandler");
-const { serveFileHandler } = require('./serveFile.js')
+const { serveHome } = require('./serveFile.js')
 const { addComment } = require("./addCommentHandler.js");
 const { serveGuestBook } = require("./guestBookHandler.js");
 const { cookieParser, injectBody } = require("./parser.js");
@@ -39,7 +39,7 @@ const createApp = ({ commentFile, guestTemplate, logger }, users, sessions) => {
   app.get(/guestbook/, serveGuestBook(users, commentFile, guestTemplate));
   app.get('/logout', logOutHandler({}));
   app.post('/addcomment', addComment);
-  app.get('/', serveFileHandler);
+  app.get('/', serveHome);
   app.get('/api/comments', apiComments);
   app.get('/api/search', apiSearch);
 
