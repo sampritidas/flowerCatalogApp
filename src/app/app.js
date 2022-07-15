@@ -18,7 +18,6 @@ const createApp = ({ commentFile, guestTemplate, logger }, users, sessions) => {
   app = express();
   const guestbook = new Guestbook(commentFile, guestTemplate);
 
-
   app.use(express.text());
   app.use(express.json());
   app.use(express.raw());
@@ -29,25 +28,27 @@ const createApp = ({ commentFile, guestTemplate, logger }, users, sessions) => {
   app.use(cookieParser);                                       //cookieParser
   app.use(injectSession(sessions = {}));
 
-  const logInRouter = express.Router();
+  const logInRouter = express.Router();                        //logInRouter
   logInRouter.get('/', getLogInPage);
   logInRouter.post('/', postLogIn(users, sessions));
 
-  const signUpRouter = express.Router();
+  const signUpRouter = express.Router();                       //signUpRouter
   signUpRouter.get('/', getSignUp);
   signUpRouter.post('/', postSignUp(users));
+
+  const apiRouter = express.Router();                           //apiRouter
+  apiRouter.get('/comments', fetchComments);
+  apiRouter.get('/search', searchByName);
 
   app.use('/login', logInRouter);
   app.use('/signup', signUpRouter);
   app.use(guestbookInitialize(guestbook));                //guestBookInitialize
-
+  app.use('/api', apiRouter);
 
   app.get(/guestbook/, serveGuestBook(users, commentFile, guestTemplate));
   app.get('/logout', logOutHandler({}));
   app.post('/addcomment', addComment);
   app.get('/', serveHome);
-  app.get('/api/comments', fetchComments);
-  app.get('/api/search', searchByName);
 
   return app;
 }
