@@ -3,11 +3,12 @@ const commentsByName = (comments, name) => {
     return comment.name === name;
   })
 };
-const apiComments = (req, res, next) => {
-  res.end(JSON.stringify(req.comments));
-}
 
-const apiSearch = (req, res, next) => {
+const fetchComments = (req, res, next) => {
+  res.end(JSON.stringify(req.comments));
+};
+
+const searchByName = (req, res, next) => {
   req.url = new URL(`http://${req.headers.host}${req.url}`);
   const name = req.url.searchParams.get('name');
 
@@ -15,6 +16,6 @@ const apiSearch = (req, res, next) => {
   const result = commentsByName(req.comments, name);
   res.end(JSON.stringify(result));
   return;
-}
+};
 
-module.exports = { apiComments, apiSearch, commentsByName };
+module.exports = { fetchComments, searchByName, commentsByName };

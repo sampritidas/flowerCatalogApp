@@ -34,6 +34,7 @@ const submitForm = () => {
   const xhr = new XMLHttpRequest();
 
   xhr.open('POST', '/addcomment');
+  xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
   xhr.send(body);
   xhr.onload = () => displayNewComment(formdata);
   return;

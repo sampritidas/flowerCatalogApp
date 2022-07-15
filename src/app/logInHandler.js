@@ -24,7 +24,7 @@ const injectSession = sessions => {
   };
 };
 
-const getLogIn = (req, res, next) => res.end(logInPage);
+const getLogInPage = (req, res, next) => res.end(logInPage);
 
 const postLogIn = (users, sessions) => (req, res, next) => {
   const username = req.bodyParam.username;
@@ -43,4 +43,4 @@ const postLogIn = (users, sessions) => (req, res, next) => {
   return;
 }
 
-module.exports = { injectSession, getLogIn, postLogIn };
+module.exports = { injectSession, getLogInPage, postLogIn };
