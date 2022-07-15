@@ -1,33 +1,49 @@
-const lib = require("./logInHandler.js");
-const { logRequest } = require("./logRequest.js");
-const { handle } = require("../server/handle.js");
-const { logOutHandler } = require("./logOutHandler");
-const { serveFileHandler } = require("./serveFile.js");
-const { signUpHandler } = require("./signUpHandler.js");
-const { onFileNotFound } = require("./onFileNotFound.js");
-const { guestBookHandler } = require("./guestBookHandler");
-const { bodyParser, cookieParser } = require("./parser.js");
-const { apiHandler } = require("../catalogApi/apiHandler.js");
-const { addCommentHandler } = require("./addCommentHandler.js");
-const { injectSession, logInHandler } = lib;
+const express = require('express');
+const { Guestbook } = require('./guestbook.js');
 
-const app = ({ commentFile, guestTemplate, logger }, users, sessions) => {
-  const handlers = [
-    logRequest(logger),
-    bodyParser,
-    cookieParser,
-    injectSession(sessions),
-    signUpHandler(users),
-    logInHandler(users, sessions),
-    logOutHandler(sessions),
-    addCommentHandler(commentFile),
-    guestBookHandler(users, commentFile, guestTemplate),
-    serveFileHandler,
-    apiHandler,
-    onFileNotFound
-  ];
-  const mainHandler = handle(handlers);
-  return (req, res) => mainHandler(req, res);
+const lib = require("./logInHandler.js");
+const { logRequest } = require('./logRequest.js');
+const { logOutHandler } = require("./logOutHandler");
+const { serveFileHandler } = require('./serveFile.js')
+const { addComment } = require("./addCommentHandler.js");
+const { serveGuestBook } = require("./guestBookHandler.js");
+const { cookieParser, injectBody } = require("./parser.js");
+const { getSignUp, postSignUp } = require("./signUpHandler.js");
+const { apiComments, apiSearch } = require("../catalogApi/apiHandler.js");
+const { guestbookInitialize } = require("./guestBookHandler.js");
+const { injectSession, getLogIn, postLogIn } = lib;
+
+
+const createApp = ({ commentFile, guestTemplate, logger }, users, sessions) => {
+  app = express();
+  const guestbook = new Guestbook(commentFile, guestTemplate);
+
+  app.use(express.text());
+  app.use(express.json());
+  app.use(express.raw());
+  app.use(express.static('public'));                           //staticFileServe
+  app.use(logRequest(logger));
+  app.use(express.urlencoded({ extended: true }));
+  app.use(injectBody);                                         //bodyParser
+  app.use(cookieParser);                                       //cookieParser
+  app.use(injectSession(sessions = {}));
+
+  app.get('/signup', getSignUp);
+  app.post('/signup', postSignUp(users));
+
+  app.get('/login', getLogIn);
+  app.post('/login', postLogIn(users, sessions));
+
+  app.use(guestbookInitialize(guestbook));                //guestBookInitialize
+
+  app.get(/guestbook/, serveGuestBook(users, commentFile, guestTemplate));
+  app.get('/logout', logOutHandler({}));
+  app.post('/addcomment', addComment);
+  app.get('/', serveFileHandler);
+  app.get('/api/comments', apiComments);
+  app.get('/api/search', apiSearch);
+
+  return app;
 }
 
-module.exports = { app };
+module.exports = { createApp };

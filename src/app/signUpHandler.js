@@ -17,23 +17,18 @@ const getUserDetails = (username) => {
   return { username };
 };
 
-const signUpHandler = (users) => (req, res, next) => {
-  if (req.url !== '/signup') {
-    next();
-    return;
-  }
-  if (req.method === 'GET') {
-    res.end(signUpPage);
-    return;
-  }
-  if (req.method === 'POST') {
-    const newUser = getUserDetails(req.bodyParam.get('username'));
-    users[newUser.username] = newUser;
-    res.statusCode = 302;
-    res.setHeader('Location', '/signUpSuccessMsg.html'); //send to success page
-    res.end('post happened');
-    return;
-  }
+const getSignUp = (req, res, next) => {
+  res.end(signUpPage);
+  next();
+  return;
 };
 
-module.exports = { signUpHandler };
+const postSignUp = users => (req, res, next) => {
+  const newUser = getUserDetails(req.bodyParam.username);
+  users[newUser.username] = newUser;
+
+  res.redirect('/signUpSuccessMsg.html');
+  res.end();
+};
+
+module.exports = { getSignUp, postSignUp };

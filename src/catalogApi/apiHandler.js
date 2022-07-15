@@ -3,24 +3,18 @@ const commentsByName = (comments, name) => {
     return comment.name === name;
   })
 };
+const apiComments = (req, res, next) => {
+  res.end(JSON.stringify(req.comments));
+}
 
-const apiHandler = (req, res, next) => {
-  if (req.url.includes('/api/comments') && req.method === 'GET') {
-    res.end(JSON.stringify(req.comments));
-    return;
-  }
+const apiSearch = (req, res, next) => {
+  req.url = new URL(`http://${req.headers.host}${req.url}`);
+  const name = req.url.searchParams.get('name');
 
-  if (req.url.includes('/api/search') && req.method === 'GET') {
-    req.url = new URL(`http://${req.headers.host}${req.url}`);
-    const name = req.url.searchParams.get('name');
-    res.setHeader('content-type', 'application/json');
-    const result = commentsByName(req.comments, name);
-    res.end(JSON.stringify(result));
-    return;
-  }
-
-  next();
+  res.set('content-type', 'application/json');
+  const result = commentsByName(req.comments, name);
+  res.end(JSON.stringify(result));
   return;
-};
+}
 
-module.exports = { apiHandler };
+module.exports = { apiComments, apiSearch, commentsByName };

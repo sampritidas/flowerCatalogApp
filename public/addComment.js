@@ -33,13 +33,10 @@ const submitForm = () => {
   const body = new URLSearchParams(formdata).toString();
   const xhr = new XMLHttpRequest();
 
-  // if (xhr.status === 200) {
   xhr.open('POST', '/addcomment');
   xhr.send(body);
   xhr.onload = () => displayNewComment(formdata);
   return;
-  // }
-  // alert('Request failed. on status ' + xhr.status);
 };
 
 const addComment = () => {

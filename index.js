@@ -1,11 +1,9 @@
-const { app } = require("./src/app/app.js");
-const { server } = require("./src/server/server.js");
-
+const { createApp } = require("./src/app/app");
 const config = {
   'commentFile': './data/comments.json',
   'guestTemplate': './src/app/guestTemplate.html',
   'logger': console.log,
 }
 
-const PORT = 5555;
-server(PORT, app(config, users = {}, sessions = {}));
+const app = createApp(config, users = {}, sessions = {});
+app.listen(4444, () => console.log('listening to the 4444'));

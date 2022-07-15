@@ -24,42 +24,23 @@ const injectSession = sessions => {
   };
 };
 
-const redirectToHomePage = (res, location) => {
-  res.statusCode = 302;
-  res.setHeader('Location', location);
+const getLogIn = (req, res, next) => res.end(logInPage);
+
+const postLogIn = (users, sessions) => (req, res, next) => {
+  const username = req.bodyParam.username;
+  const session = createSession(username);
+
+  if (!users[username]) {
+    res.redirect('/signup');
+    res.end();
+    return;
+  }
+
+  sessions[session.id] = session;
+  res.cookie('id', `${session.id}`);
+  res.redirect('/guestbook');
   res.end();
   return;
 }
 
-const logInHandler = (users, sessions) => {
-  return (req, res, next) => {
-    const sessionId = req.cookie.id;
-
-    if (req.url !== '/login') {
-      next();
-      return;
-    }
-
-    if (req.sessions[sessionId]) {
-      return redirectToHomePage(res, '/guestbook');
-    }
-
-    if (req.method === 'GET') {
-      res.end(logInPage);
-      return;
-    }
-
-    const username = req.bodyParam.get('username');
-    const session = createSession(username);
-
-    if (!users[username]) {
-      return redirectToHomePage(res, '/signup');
-    }
-
-    sessions[session.id] = session;
-    res.setHeader('set-cookie', `id=${session.id}`);
-    return redirectToHomePage(res, '/guestbook');
-  };
-};
-
-module.exports = { injectSession, logInHandler };
+module.exports = { injectSession, getLogIn, postLogIn };

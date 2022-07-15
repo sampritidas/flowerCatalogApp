@@ -8,10 +8,10 @@ const logOutHandler = (sessions) => {
     if (req.url === '/logout' && req.method === 'GET') {
       deleteSession(req, sessions);
 
-      res.statusCode = 302;
-      res.setHeader('set-cookie', "id=0; max-age=0");
-      res.setHeader('Location', '/login');
-      res.end();
+      res.clearCookie('id', '0');
+      res.clearCookie('max-age', '0');
+      res.redirect('/login');
+      res.status(302).end();
       return;
     }
     next();

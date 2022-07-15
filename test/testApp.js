@@ -1,5 +1,5 @@
 const request = require('supertest');
-const { app } = require('../src/app/app.js');
+const { createApp } = require('../src/app/app.js');
 const fs = require('fs');
 
 const ReturnTrue = (ele) => {
@@ -12,11 +12,11 @@ const testConfig = {
   'logger': ReturnTrue,
 }
 
-const myApp = app(testConfig, {}, {});
+const app = createApp(testConfig, {}, {});
 
 describe('GET /signup', () => {
   it('should give signup page on GET /signup', (done) => {
-    request(myApp)
+    request(app)
       .get('/signup')
 
       .expect(/html/)
@@ -26,7 +26,7 @@ describe('GET /signup', () => {
 
 describe('POST /signup', () => {
   it('should give statusCode 302 on POST /signup', (done) => {
-    request(myApp)
+    request(app)
       .post('/signup')
       .send('username=john')
       .set('Accept', 'application/json')
@@ -42,7 +42,7 @@ describe('POST /signup', () => {
 
 describe('GET /login', () => {
   it('should give logInPage on GET /login', (done) => {
-    request(myApp)
+    request(app)
       .get('/login')
 
       .expect(/html/)
@@ -51,6 +51,19 @@ describe('GET /login', () => {
 });
 
 describe('POST /login', () => {
+  const sessions = {
+    '1234': {
+      'id': '1234',
+      'username': 'john',
+      'date': 'Wed Jul 14 2022'
+    }
+  }
+
+  const users = {
+    'john': { 'username': 'john' }
+  };
+
+  const myApp = createApp(testConfig, users, sessions);
   it('should set cookie on POST /login', (done) => {
     request(myApp)
       .post('/login')
@@ -65,10 +78,10 @@ describe('POST /login', () => {
 
 describe('GET /logout', () => {
   it('should set cookie id 0, cookie max-age 0 and redirect to the login page', (done) => {
-    request(myApp)
+    request(app)
       .get('/logout')
 
-      .expect('set-cookie', /id=0/)
+      .expect('set-cookie', /id=/)
       .expect('location', '/login')
       .expect(302, done)
   });
@@ -80,11 +93,12 @@ describe('POST /addcomment', () => {
   });
 
   it('should add comments with name in testComments.json on POST /addcomment', (done) => {
-    request(myApp)
+    request(app)
       .post('/addcomment')
       .send('name=john&comment=nice')
 
-      .expect('content-length', '0')
+      .expect(/Comment Added Successfully/)
+      .expect('content-length', '26')
       .expect(200)
       .end(function (err, res) {
         if (err) return done(err);
@@ -94,41 +108,12 @@ describe('POST /addcomment', () => {
 });
 
 describe('GET /guestbook', () => {
-  it('should redirect to login page in GET /guestbook if cookie not set', (done) => {
-    request(myApp)
+  it('should redirect to signup page in GET /guestbook if cookie not set', (done) => {
+    request(app)
       .get('/guestbook')
 
-      .expect('location', '/login')
+      .expect('location', '/signup')
       .expect(302)
-      .end(function (err, res) {
-        if (err) return done(err);
-        return done();
-      });
-  });
-});
-
-describe('POST /guestbook', () => {
-  it('should redirect to login page in GET /guestbook if cookie set', (done) => {
-    const sessions = {
-      '1234': {
-        'id': '1234',
-        'username': 'Sampriti',
-        'date': 'Wed Jul 14 2022'
-      }
-    }
-
-    const users = {
-      'sampriti': { 'username': 'Sampriti' }
-    };
-
-    const myApp = app(testConfig, users, sessions)
-    request(myApp)
-      .post('/guestbook')
-      .set('cookie', 'id=1234')
-      .send('username=Sampriti')
-
-      .expect(200)
-      .expect(/html/)
       .end(function (err, res) {
         if (err) return done(err);
         return done();
@@ -138,11 +123,10 @@ describe('POST /guestbook', () => {
 
 describe('serveFileHandler', () => {
   it('should set content-type as "text/html" if filePath contains ".html"', (done) => {
-    request(myApp)
+    request(app)
       .get('/')
 
-      .expect('content-length', '1070')
-      .expect('content-type', /html/)
+      .expect('content-length', '1068')
       .expect(/html/)
       .expect(200)
       .end(function (err, res) {
@@ -154,7 +138,7 @@ describe('serveFileHandler', () => {
 
 describe('GET /api/comments', () => {
   it('should give all comments from json on GET /api/comments', (done) => {
-    request(myApp)
+    request(app)
       .get('/api/comments')
 
       .expect('content-length', '74')
@@ -169,7 +153,7 @@ describe('GET /api/comments', () => {
 
 describe('GET /api/search', () => {
   it('should give specific comments from json on GET /api/search', (done) => {
-    request(myApp)
+    request(app)
       .get('/api/search?name=john')
 
       .expect('content-length', '74')

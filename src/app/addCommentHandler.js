@@ -1,25 +1,23 @@
-const { Guestbook } = require("./guestbook");
+const makeJsonToString = (bodyParams) => {
+  if (!bodyParams.length) {
+    return bodyParams;
+  }
+  const parseParams = {};
+  const params = bodyParams.split('&');
+  params.forEach(param => {
+    const [key, value] = param.split('=');
+    parseParams[key] = value;
+  });
+  return parseParams;
+};
 
-const addComment = (req, res) => {
-  const name = req.bodyParam.get('name');
-  const comment = req.bodyParam.get('comment');
-
-  req.guestbook.initialize();
+const addComment = (req, res, next) => {
+  const { name, comment } = makeJsonToString(req.bodyParam);
   req.guestbook.addComment(name, comment);
 
-  res.end();
+  res.end('Comment Added Successfully');
+  next();
   return;
 };
 
-const addCommentHandler = commentFile => (req, res, next) => {
-  if (req.url.includes('addcomment') && req.method === 'POST') {
-
-    const guestbook = new Guestbook(commentFile);
-    req.guestbook = guestbook;
-    addComment(req, res);
-    return;
-  }
-  next();
-};
-
-module.exports = { addCommentHandler };
+module.exports = { addComment };
